@@ -1,0 +1,31 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-[#0d1b2a] text-white">
+  
+  <!-- Logo Section -->
+  <div class="mb-8">
+    <img src="assets/logo.svg" alt="Tu podcast logo" class="w-12 h-12">
+  </div>
+
+  <!-- Main Heading -->
+  <h1 class="text-4xl md:text-5xl font-semibold mb-10 text-center">¿Qué historia quieres que cobre vida hoy?</h1>
+  
+  <!-- Form Section -->
+  <form (ngSubmit)="onSubmit()" class="flex items-center">
+    <input
+      type="text"
+      [(ngModel)]="query"
+      name="query"
+      placeholder="¿De qué vamos a hablar hoy?"
+      class="px-6 py-4 text-2xl rounded-full border border-gray-600 w-96 mr-4 bg-gray-200 text-gray-800 placeholder-gray-500"
+      required
+    />
+    
+    <button
+      type="submit"
+      class="text-3xl bg-gray-400 text-gray-700 rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-500"
+      [disabled]="isLoading"
+    >
+      <span *ngIf="!isLoading">🎙️</span>
+      <span *ngIf="isLoading" class="loader"></span> <!-- Display a spinner if loading -->
+    </button>
+  </form>
+</div>

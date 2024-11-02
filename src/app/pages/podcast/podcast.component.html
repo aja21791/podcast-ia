@@ -1,0 +1,41 @@
+<div class="bg-[#0d1b2a] min-h-screen flex items-center justify-center">
+  <div class="bg-white rounded-xl p-8 shadow-lg w-80 text-center">
+    <h2 class="text-lg font-semibold mb-2">Podcast</h2>
+    <h3 class="text-2xl font-bold mb-4">{{ topic }}</h3>
+    
+    <app-waveform [isPlaying]="isPlaying" class="mb-8"></app-waveform>
+
+    <div class="flex items-center justify-center space-x-6 mb-8">
+      <button class="text-gray-600 hover:text-black" (click)="skip(-10)">
+        <i class="material-icons">skip_previous</i>
+      </button>
+      <button (click)="togglePlay()" class="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center">
+        <i class="material-icons">{{ isPlaying ? 'pause' : 'play_arrow' }}</i>
+      </button>
+      <button class="text-gray-600 hover:text-black" (click)="skip(10)">
+        <i class="material-icons">skip_next</i>
+      </button>
+    </div>
+
+    <div class="progress-container flex items-center space-x-2 mb-4">
+      <span class="text-xs">{{ currentTime | date:'mm:ss' }}</span>
+      <input
+        type="range"
+        class="progress-bar"
+        [value]="progress"
+        (input)="onSeek($event)"
+        [max]="duration"
+      />
+      <span class="text-xs">{{ duration | date:'mm:ss' }}</span>
+    </div>
+
+    <button class="bg-gray-800 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700">
+      Descargar
+    </button>
+
+    <audio #audio (timeupdate)="updateProgress()" (loadedmetadata)="updateDuration()" (ended)="onAudioEnded()">
+      <source src="assets/your-audio-file.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+</div>

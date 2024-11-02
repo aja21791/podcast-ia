@@ -1,0 +1,41 @@
+
+img {
+    max-width: 100%;
+  }
+  
+  button {
+    transition: background-color 0.3s ease;
+  }
+  
+  .progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    appearance: none;
+    height: 4px;
+    background-color: #ccc;
+    border-radius: 2px;
+    outline: none;
+  }
+  
+  .progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background-color: #4a5568;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .progress-bar::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background-color: #4a5568;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
