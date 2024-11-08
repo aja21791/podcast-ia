@@ -1,8 +1,16 @@
 <div class="bg-[#0d1b2a] min-h-screen flex items-center justify-center">
-  <div class="bg-white rounded-xl p-8 shadow-lg w-80 text-center">
+  <div class="absolute top-4 left-4">
+    <div class="mb-8 flex items-center space-x-5">
+      <img src="assets/logo-dark.svg" alt="Tu podcast logo" style="width: 70px;">
+      <h1 class="text-4xl md:text-4xl font-semibold text-white">Tu podcast</h1>
+    </div>
+
+  </div>
+  <div class="bg-white rounded-xl p-8 shadow-lg w-80 md:w-96 text-center">
     <h2 class="text-lg font-semibold mb-2">Podcast</h2>
-    <h3 class="text-2xl font-bold mb-4">{{ topic }}</h3>
-    
+    <div>
+      <h3 class="text-2xl font-bold mb-4">{{ topic }}</h3>
+    </div>
     <app-waveform [isPlaying]="isPlaying" class="mb-8"></app-waveform>
 
     <div class="flex items-center justify-center space-x-6 mb-8">
@@ -18,24 +26,26 @@
     </div>
 
     <div class="progress-container flex items-center space-x-2 mb-4">
-      <span class="text-xs">{{ currentTime | date:'mm:ss' }}</span>
+      <span class="text-xs">{{ currentTime | timeFormat }}</span>
       <input
         type="range"
         class="progress-bar"
         [value]="progress"
         (input)="onSeek($event)"
-        [max]="duration"
+        [max]="100"
       />
-      <span class="text-xs">{{ duration | date:'mm:ss' }}</span>
+      <span class="text-xs">{{ duration | timeFormat }}</span>
     </div>
 
-    <button class="bg-gray-800 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700">
+    <button class="bg-gray-800 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-700" (click)="downloadPodcast()">
       Descargar
     </button>
-
     <audio #audio (timeupdate)="updateProgress()" (loadedmetadata)="updateDuration()" (ended)="onAudioEnded()">
-      <source src="assets/your-audio-file.mp3" type="audio/mpeg">
+      <source [src]="audioUrl" type="audio/mpeg">
       Your browser does not support the audio element.
     </audio>
+  </div>
+  <div class="absolute bottom-4 w-full text-center">
+    <p class="text-white text-sm">Transforma tus ideas en un podcast de alta calidad con IA, facil y rápido.</p>
   </div>
 </div>
