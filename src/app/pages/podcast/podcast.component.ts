@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WaveformComponent } from '../../components/waveform/waveform.component';
+import { WaveformComponent } from '../components/waveform/waveform.component'; 
+import { HttpClientModule } from '@angular/common/http';
+import { TimeFormatPipe } from '../../pipe/time-format.pipe';
 
 @Component({
   selector: 'app-podcast',
   standalone: true,
-  imports: [CommonModule, WaveformComponent],
+  imports: [HttpClientModule, CommonModule, WaveformComponent,TimeFormatPipe],
   templateUrl: './podcast.component.html',
   styleUrls: ['./podcast.component.css']
 })
-export class PodcastComponent {
+export class PodcastComponent implements OnInit {
   @ViewChild('audio', { static: false }) audioRef!: ElementRef<HTMLAudioElement>;
 
   isPlaying = false;
@@ -18,50 +20,58 @@ export class PodcastComponent {
   duration = 0;
   progress = 0;
   topic: string = '';
+  audioUrl: string | undefined;
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.topic = params['topic'] || 'No topic specified';
-    });
+      this.audioUrl = localStorage.getItem('podcastBlob') || '';
+      this.topic = localStorage.getItem('podcastTopic') || 'No topic specified';
+      if (this.audioUrl && this.audioRef) {
+        this.audioRef.nativeElement.src = this.audioUrl;
+      }
   }
 
-  togglePlay() {
+  togglePlay(): void {
+    const audio = this.audioRef.nativeElement;
     if (this.isPlaying) {
-      this.audioRef.nativeElement.pause();
+      audio.pause();
     } else {
-      this.audioRef.nativeElement.play();
+      audio.play();
     }
     this.isPlaying = !this.isPlaying;
   }
 
-  updateProgress() {
+  skip(seconds: number): void {
+    const audio = this.audioRef.nativeElement;
+    audio.currentTime += seconds;
+  }
+
+  updateProgress(): void {
     const audio = this.audioRef.nativeElement;
     this.currentTime = audio.currentTime;
-    this.progress = (audio.currentTime / audio.duration) * 100 || 0;
+    this.progress = (audio.currentTime / audio.duration) * 100;
   }
 
-  updateDuration() {
-    this.duration = this.audioRef.nativeElement.duration;
+  updateDuration(): void {
+    const audio = this.audioRef.nativeElement;
+    this.duration = audio.duration;
   }
 
-  onAudioEnded() {
+  onSeek(event: Event): void {
+    const audio = this.audioRef.nativeElement;
+    const input = event.target as HTMLInputElement;
+    audio.currentTime = (input.valueAsNumber / 100) * audio.duration;
+  }
+
+  onAudioEnded(): void {
     this.isPlaying = false;
-    this.currentTime = 0;
-    this.progress = 0;
   }
 
-  onSeek(event: Event) {
-    const audio = this.audioRef.nativeElement;
-    const target = event.target as HTMLInputElement;
-    const seekTime = (parseFloat(target.value) / 100) * audio.duration;
-    audio.currentTime = seekTime;
-  }
-
-  skip(seconds: number) {
-    const audio = this.audioRef.nativeElement;
-    audio.currentTime = Math.min(Math.max(audio.currentTime + seconds, 0), audio.duration);
-    this.updateProgress();
+  downloadPodcast(): void {
+    const a = document.createElement('a');
+    a.href = this.audioUrl!;
+    a.download = `tu_podcast_${this.topic}.mp3`;
+    a.click();
   }
 }
